@@ -3,3 +3,9 @@ function helloWorld() {
 }
 
 helloWorld();
+
+function helloGit() {
+    console.log("Hello, Git!");
+}
+
+helloGit();
