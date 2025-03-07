@@ -1,22 +1,27 @@
-function myPrompt() {
-    let firstNumInput = prompt('Ввведите число');
-    let secondNumInput = prompt('Введите систему счисления для числа');
+let array = [1, 2, 5, 4, 5, 6];
+let a = 2;
+let b = 4;
+const object = "object";
+const number = "number";
 
-    let firstNum = parseInt(firstNumInput, 10);
-    let secondNum = parseInt(secondNumInput, 10);
-
-    if (isNaN(firstNum) || !Number.isInteger(firstNum)) {
-        alert("Некорректный ввод!");
+function selectFromInterval(arr, a, b) {
+    if (!isArrayOnlyNumbers(array)) {
+        alert("There are not only numbers in the array!");
+        return ;
+    } else if (typeof arr !== object) {
+        alert("First parameter must be an array!")
+        return;
+    } else if (!Number.isInteger(a) || !Number.isInteger(b)) {
+        alert("Incorrect input parameters!");
         return;
     }
-    if (isNaN(secondNum) || !Number.isInteger(secondNum) || secondNum < 2 || secondNum > 36) {
-        alert("Некорректный ввод!");
-        return;
-    }
-
-
-    let convertedNum = firstNum.toString(secondNum);
-    alert(`Ответ: число ${firstNum} в ${secondNum}-ой системе счисления = ${convertedNum}`);
+    let firsIndexNumber = arr.find(num => (a === num));
+    let secondIndexNumber = arr.find(num => (b === num));
+    return arr.slice(firsIndexNumber - 1, secondIndexNumber).sort();
 }
 
-myPrompt();
+function isArrayOnlyNumbers(arr) {
+    return arr.every(item => typeof item === number);
+}
+
+selectFromInterval(array, a, b);
