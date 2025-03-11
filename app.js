@@ -1,3 +1,5 @@
+//task 2
+
 let array = [1, 2, 5, 4, 5, 6];
 let a = 2;
 let b = 4;
@@ -25,3 +27,26 @@ function isArrayOnlyNumbers(arr) {
 }
 
 selectFromInterval(array, a, b);
+
+//task 3
+
+const arr = [
+    {name: 'Bob', age: '25'},
+    {name: 'Ann', age: '30'},
+    {name: 'Tom', age: '35'},
+];
+
+const fn = key => item => console.log(item[key]);
+
+arr.forEach(fn('name'));
+arr.forEach(fn('age'));
+
+
+//task 4
+
+const  string = "some str";
+function reverseStr(str) {
+    return str.split('').reverse().join('');
+}
+
+console.log(reverseStr(string));
