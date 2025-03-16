@@ -1,52 +1,84 @@
+function memoize(callback) {
+    const cache = {};
+
+    return function(...args) {
+        const key = JSON.stringify(args.sort());
+        console.log(key);
+        console.log('cache before ', cache);
+
+
+
+        if (cache[`${key}`] !== undefined) {
+            console.log('Get from cache');
+            console.log('123',cache[`${key}`])
+            return cache[`${key}`];
+        }
+
+        console.log('First calculation')
+        const result = callback(...args);
+        cache[`${key}`] = result;
+        console.log('cache after ', cache);
+
+        return result;
+    }
+}
+
+function sum(...args) {
+ return args.reduce((acc, item) => {
+     acc += item;
+     return acc;
+ }, 0)
+}
+
+const sumWithCache = memoize(sum)
+
+sumWithCache(2,3,4);
+sumWithCache(2,4,3);
+sumWithCache(-1,4,2);
+sumWithCache(2,4,-1);
+
 //task 2
 
-let array = [1, 2, 5, 4, 5, 6];
-let a = 2;
-let b = 4;
-const object = "object";
-const number = "number";
+function add(a) {
+    let sum = a;
 
-function selectFromInterval(arr, a, b) {
-    if (!isArrayOnlyNumbers(array)) {
-        alert("There are not only numbers in the array!");
-        return ;
-    } else if (typeof arr !== object) {
-        alert("First parameter must be an array!")
-        return;
-    } else if (!Number.isInteger(a) || !Number.isInteger(b)) {
-        alert("Incorrect input parameters!");
-        return;
+    function next(b) {
+        if (b === undefined) {
+            return sum;
+        }
+        sum += b;
+        return next;
     }
-    let firsIndexNumber = arr.find(num => (a === num));
-    let secondIndexNumber = arr.find(num => (b === num));
-    return arr.slice(firsIndexNumber - 1, secondIndexNumber).sort();
+
+    return next;
 }
 
-function isArrayOnlyNumbers(arr) {
-    return arr.every(item => typeof item === number);
-}
-
-selectFromInterval(array, a, b);
+console.log(add(1)(2)(3)());
+console.log(add(4)(5)(6)(7)());
 
 //task 3
 
-const arr = [
-    {name: 'Bob', age: '25'},
-    {name: 'Ann', age: '30'},
-    {name: 'Tom', age: '35'},
-];
+function logger() {
+    console.log(`I output only external context: ${this.item}`);
+}
 
-const fn = key => item => console.log(item[key]);
+const obj = { item: "some value" };
 
-arr.forEach(fn('name'));
-arr.forEach(fn('age'));
-
+logger.call(obj);
+logger.apply(obj);
+logger.bind(obj)();
 
 //task 4
 
-const  string = "some str";
-function reverseStr(str) {
-    return str.split('').reverse().join('');
+function myBind(func, context) {
+    return function(...args) {
+        return func.apply(context, args);
+    }
 }
 
-console.log(reverseStr(string));
+const a = function () {
+    return this;
+}
+
+const b = myBind(a, {foo: 'bar' });
+console.log(b())
