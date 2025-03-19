@@ -1,84 +1,98 @@
-function memoize(callback) {
-    const cache = {};
+class Node {
+    constructor(value) {
+        this.value = value;
+        this.next = null;
+    }
+}
 
-    return function(...args) {
-        const key = JSON.stringify(args.sort());
-        console.log(key);
-        console.log('cache before ', cache);
+class LinkedList {
+    constructor() {
+        this.head = null;
+        this.tail = null;
+        this.length = 0;
+    }
 
+    prepend(value) {
+        const newNode = new Node(value);
+        if (!this.head) {
+            this.head = this.tail = newNode;
+        } else {
+            newNode.next = this.head;
+            this.head = newNode;
+        }
+        this.length++;
+    }
 
+    append(value) {
+        const newNode = new Node(value);
+        if (!this.head) {
+            this.head = this.tail = newNode;
+        } else {
+            this.tail.next = newNode;
+            this.tail = newNode;
+        }
+        this.length++;
+    }
 
-        if (cache[`${key}`] !== undefined) {
-            console.log('Get from cache');
-            console.log('123',cache[`${key}`])
-            return cache[`${key}`];
+    remove(value) {
+        if (!this.head) return;
+
+        if (this.head.value === value) {
+            this.head = this.head.next;
+            this.length--;
+            if (!this.head) {
+                return this.tail = null;
+            }
+            return;
         }
 
-        console.log('First calculation')
-        const result = callback(...args);
-        cache[`${key}`] = result;
-        console.log('cache after ', cache);
-
-        return result;
-    }
-}
-
-function sum(...args) {
- return args.reduce((acc, item) => {
-     acc += item;
-     return acc;
- }, 0)
-}
-
-const sumWithCache = memoize(sum)
-
-sumWithCache(2,3,4);
-sumWithCache(2,4,3);
-sumWithCache(-1,4,2);
-sumWithCache(2,4,-1);
-
-//task 2
-
-function add(a) {
-    let sum = a;
-
-    function next(b) {
-        if (b === undefined) {
-            return sum;
+        let currentItem = this.head;
+        while (currentItem.next) {
+            if (currentItem.next.value === value) {
+                currentItem.next = currentItem.next.next;
+                this.length--;
+                if (!currentItem.next) {
+                    return this.tail = currentItem;
+                }
+                return;
+            }
+            currentItem = currentItem.next;
         }
-        sum += b;
-        return next;
     }
 
-    return next;
-}
+    find(value) {
+        let currentItem = this.head;
+        while (currentItem) {
+            if (currentItem.value === value) {
+                return currentItem;
+            }
+            currentItem = currentItem.next;
+        }
+        return null;
+    }
 
-console.log(add(1)(2)(3)());
-console.log(add(4)(5)(6)(7)());
+    size() {
+        return this.length;
+    }
 
-//task 3
-
-function logger() {
-    console.log(`I output only external context: ${this.item}`);
-}
-
-const obj = { item: "some value" };
-
-logger.call(obj);
-logger.apply(obj);
-logger.bind(obj)();
-
-//task 4
-
-function myBind(func, context) {
-    return function(...args) {
-        return func.apply(context, args);
+    toArray() {
+        const elements = [];
+        let currentItem = this.head;
+        while (currentItem) {
+            elements.push(currentItem.value);
+            currentItem = currentItem.next;
+        }
+        return elements;
     }
 }
 
-const a = function () {
-    return this;
-}
-
-const b = myBind(a, {foo: 'bar' });
-console.log(b())
+const list = new LinkedList();
+list.append(1);
+list.prepend(0);
+list.append(2);
+list.prepend(3);
+console.log(list.toArray());
+list.remove(2);
+console.log(list.toArray());
+console.log(list.find(3));
+console.log(list.size());
