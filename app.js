@@ -1,52 +1,98 @@
-//task 2
-
-let array = [1, 2, 5, 4, 5, 6];
-let a = 2;
-let b = 4;
-const object = "object";
-const number = "number";
-
-function selectFromInterval(arr, a, b) {
-    if (!isArrayOnlyNumbers(array)) {
-        alert("There are not only numbers in the array!");
-        return ;
-    } else if (typeof arr !== object) {
-        alert("First parameter must be an array!")
-        return;
-    } else if (!Number.isInteger(a) || !Number.isInteger(b)) {
-        alert("Incorrect input parameters!");
-        return;
+class Node {
+    constructor(value) {
+        this.value = value;
+        this.next = null;
     }
-    let firsIndexNumber = arr.find(num => (a === num));
-    let secondIndexNumber = arr.find(num => (b === num));
-    return arr.slice(firsIndexNumber - 1, secondIndexNumber).sort();
 }
 
-function isArrayOnlyNumbers(arr) {
-    return arr.every(item => typeof item === number);
+class LinkedList {
+    constructor() {
+        this.head = null;
+        this.tail = null;
+        this.length = 0;
+    }
+
+    prepend(value) {
+        const newNode = new Node(value);
+        if (!this.head) {
+            this.head = this.tail = newNode;
+        } else {
+            newNode.next = this.head;
+            this.head = newNode;
+        }
+        this.length++;
+    }
+
+    append(value) {
+        const newNode = new Node(value);
+        if (!this.head) {
+            this.head = this.tail = newNode;
+        } else {
+            this.tail.next = newNode;
+            this.tail = newNode;
+        }
+        this.length++;
+    }
+
+    remove(value) {
+        if (!this.head) return;
+
+        if (this.head.value === value) {
+            this.head = this.head.next;
+            this.length--;
+            if (!this.head) {
+                return this.tail = null;
+            }
+            return;
+        }
+
+        let currentItem = this.head;
+        while (currentItem.next) {
+            if (currentItem.next.value === value) {
+                currentItem.next = currentItem.next.next;
+                this.length--;
+                if (!currentItem.next) {
+                    return this.tail = currentItem;
+                }
+                return;
+            }
+            currentItem = currentItem.next;
+        }
+    }
+
+    find(value) {
+        let currentItem = this.head;
+        while (currentItem) {
+            if (currentItem.value === value) {
+                return currentItem;
+            }
+            currentItem = currentItem.next;
+        }
+        return null;
+    }
+
+    size() {
+        return this.length;
+    }
+
+    toArray() {
+        const elements = [];
+        let currentItem = this.head;
+        while (currentItem) {
+            elements.push(currentItem.value);
+            currentItem = currentItem.next;
+        }
+        return elements;
+    }
 }
 
-selectFromInterval(array, a, b);
-
-//task 3
-
-const arr = [
-    {name: 'Bob', age: '25'},
-    {name: 'Ann', age: '30'},
-    {name: 'Tom', age: '35'},
-];
-
-const fn = key => item => console.log(item[key]);
-
-arr.forEach(fn('name'));
-arr.forEach(fn('age'));
-
-
-//task 4
-
-const  string = "some str";
-function reverseStr(str) {
-    return str.split('').reverse().join('');
-}
-
-console.log(reverseStr(string));
+const list = new LinkedList();
+list.append(1);
+list.prepend(0);
+list.append(2);
+list.prepend(3);
+console.log(list.toArray());
+list.remove(2);
+console.log(list.toArray());
+console.log(list.find(3));
+console.log(list.size());
