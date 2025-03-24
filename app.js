@@ -1,66 +1,59 @@
 "use strict";
-const ELECTRIC = 'electric';
-class Vehicle {
-    constructor(brand, model, year, speed = 0) {
-        this.brand = brand;
-        this.model = model;
-        this.year = year;
-        this.speed = speed;
-    }
-    accelerate(amount) {
-        this.speed += amount;
-        console.log(`${this.brand} ${this.model} speed is ${this.speed} km/h`);
-    }
-    brake(amount) {
-        this.speed -= amount;
-        console.log(`${this.brand} ${this.model} speed is ${this.speed} km/h`);
-    }
-    info() {
-        console.log(`This is car ${this.brand} ${this.model}, year of production ${this.year}. Max speed ${this.speed}`);
-    }
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+const orders = [
+    { id: 1, item: "Laptop", paid: true },
+    { id: 2, item: "Phone", paid: false },
+    { id: 3, item: "Tablet", paid: true },
+    { id: 4, item: "Computer", paid: true },
+];
+const deliveryData = {
+    1: "Delivered in 3 days",
+    3: "Delivered in 5 days",
+    4: "Delivered in 7 days",
+};
+function fetchDeliveryInfo(orderId) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve({ orderId, deliveryTime: deliveryData[orderId] || "Unknown" });
+        }, 1000);
+    });
 }
-class Car extends Vehicle {
-    constructor(brand, model, year, speed, fuelType) {
-        super(brand, model, year, speed);
-        this.fuelType = fuelType;
-    }
-    refuel() {
-        console.log(`${this.brand} ${this.model} refueled ${this.fuelType}`);
-    }
+function fetchOrders() {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            if (orders) {
+                resolve(orders);
+            }
+            else {
+                reject(new Error("Failed to fetch orders"));
+            }
+        }, 2000);
+    });
 }
-class ElectricCar extends Car {
-    constructor(brand, model, year, speed, batteryLevel) {
-        super(brand, model, year, speed, ELECTRIC);
-        this.batteryLevel = batteryLevel;
-    }
-    getBatteryLevel() {
-        return this.batteryLevel;
-    }
-    setBatteryLevel(level) {
-        this.batteryLevel = level;
-        console.log(`${this.brand} ${this.model} charge is  ${this.batteryLevel}%.`);
-    }
-    charge() {
-        this.setBatteryLevel(100);
-        console.log(`${this.brand} ${this.model} charged`);
-    }
-    refuel() {
-        console.log(`${this.brand} ${this.model} charged`);
-    }
+function processOrder() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const allOrders = yield fetchOrders();
+            const paidOrders = allOrders.filter(order => order.paid);
+            const deliveryPromises = paidOrders.map(order => fetchDeliveryInfo(order.id));
+            const deliveryInfo = yield Promise.all(deliveryPromises);
+            const finalOrders = paidOrders.map((order) => {
+                var _a;
+                return (Object.assign(Object.assign({}, order), { deliveryTime: ((_a = deliveryInfo.find(info => info.orderId === order.id)) === null || _a === void 0 ? void 0 : _a.deliveryTime) || "Unknown" }));
+            });
+            console.log("Final Orders with Delivery Info:", finalOrders);
+        }
+        catch (error) {
+            console.error("Error processing orders:", error);
+        }
+    });
 }
-const vehicle = new Vehicle("Honda", "Civic", 2000, 100);
-vehicle.info();
-vehicle.accelerate(20);
-vehicle.brake(50);
-const car = new Car("Audi", "100", 1998, 60, "Gas");
-car.info();
-car.refuel();
-car.accelerate(15);
-car.brake(10);
-const electricCar = new ElectricCar("Tesla", "Model S", 2022, 80, 50);
-electricCar.info();
-electricCar.refuel();
-electricCar.charge();
-electricCar.accelerate(25);
-electricCar.brake(40);
-electricCar.setBatteryLevel(80);
+processOrder();
